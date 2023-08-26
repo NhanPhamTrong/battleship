@@ -4,19 +4,19 @@ import { cellArray } from "./Data"
 
 export const App = () => {
     const [isShooting, setIsShooting] = useState(false)
-    const [playerCellData, setPlayerCellData] = useState(() => {
-        let data = []
-        for (let i = 0; i < cellArray.length; i++) {
-            cellArray[i].forEach(cell => {
-                data.push({
-                    id: i + "-" + cell,
-                    isShipPart: false,
-                    isShot: false
-                })
-            })
-        }
-        return data
-    })
+    // const [playerCellData, setPlayerCellData] = useState(() => {
+    //     let data = []
+    //     for (let i = 0; i < cellArray.length; i++) {
+    //         cellArray[i].forEach(cell => {
+    //             data.push({
+    //                 id: i + "-" + cell,
+    //                 isShipPart: false,
+    //                 isShot: false
+    //             })
+    //         })
+    //     }
+    //     return data
+    // })
 
     const ClickStart = () => {
         setIsShooting(true)
