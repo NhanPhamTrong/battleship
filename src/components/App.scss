@@ -9,11 +9,12 @@ header {
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 10;
 }
 
 main {
     min-height: 100vh;
-    padding: 5rem 1rem 0 1rem;
+    padding: 5rem 1rem;
 
     .main-header {
         padding: 0.5rem 2rem;
@@ -22,19 +23,25 @@ main {
         background: $primary;
         border: $on-background solid 2px;
         border-radius: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
 
-        button {
-            padding: 0.5rem 1rem;
-            background: $on-surface;
-            border: $on-background solid 2px;
-            border-radius: 1rem;
+        .btn {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            button {
+                margin: 0.25rem 0;
+                padding: 0.5rem 1rem;
+                background: $on-surface;
+                border: $on-background solid 2px;
+                border-radius: 1rem;
+            }
         }
         
         .result {
+            margin: 1rem 0;
             display: flex;
+            justify-content: center;
 
             div {
                 margin: 0 0.5rem;
@@ -55,7 +62,7 @@ main {
                 line-height: 2rem;
 
                 div {
-                    margin-left: 1rem;
+                    margin-left: 0.25rem;
                     height: 1rem;
                     width: 1rem;
                     background: var(--i);
@@ -67,6 +74,8 @@ main {
     .container {
         margin-top: 1rem;
         display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: space-between;
 
         .player-section, .computer-section {
@@ -95,20 +104,56 @@ main {
                     left: 0;
                     top: 0;
                 }
+
+                .cell.ship {
+                    background: green;
+                }
             }
         }
 
+        .player-section {
+            margin-bottom: 1rem;
+        }
+
         .deploy-section {
+            width: 50%;
+
+            h1 {
+                margin-bottom: 0.5rem;
+            }
+
+            button {
+                padding: 0.5rem 1rem;
+                background: $primary;
+                border: $on-background solid 2px;
+            }
+
+            button:hover {
+                background: $on-background;
+                color: $on-surface;
+            }
+
+            button.active {
+                background: $surface;
+                color: $on-surface;
+            }
+
             .direction-options {
                 button {
-
+                    border-radius: 10rem;
                 }
             }
 
             ul {
                 li {
-                    button {
+                    margin-top: 0.5rem;
 
+                    button {
+                        width: 12rem;
+                        border-radius: 0.25rem;
+                        background: $primary;
+                        display: flex;
+                        justify-content: space-between;
                     }
                 }
             }
@@ -123,6 +168,29 @@ main {
         .modal-container {
             p {
 
+            }
+        }
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    main {
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .container {
+            flex-direction: row;
+            align-items: flex-start;
+
+            .player-section, .computer-section, .deploy-section {
+                margin: 0 1rem;
+            }
+            
+            .player-section {
+                margin-bottom: 0;
             }
         }
     }

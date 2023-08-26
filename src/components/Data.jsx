@@ -10,3 +10,22 @@ export const cellArray = [
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 ]
+
+export const shipContent = [
+    {
+        id: "carrier",
+        length: 5
+    },
+    {
+        id: "battleship",
+        length: 4
+    },
+    {
+        id: "cruiser",
+        length: 3
+    },
+    {
+        id: "destroyer",
+        length: 2
+    }
+]
