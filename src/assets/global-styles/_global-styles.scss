@@ -1,0 +1,14 @@
+@import "reset";
+@import "variables";
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: $background;
+
+    #root {
+        min-height: 100vh;
+        width: 100%;
+        font-size: 1rem;
+        position: relative;
+    }
+}

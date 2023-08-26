@@ -1,0 +1,129 @@
+@import "../assets/global-styles/global-styles";
+
+header {
+    width: 100%;
+    padding: 1rem 0;
+    background: $surface;
+    color: $on-surface;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+main {
+    min-height: 100vh;
+    padding: 5rem 1rem 0 1rem;
+
+    .main-header {
+        padding: 0.5rem 2rem;
+        width: 60%;
+        margin: 0 auto;
+        background: $primary;
+        border: $on-background solid 2px;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        button {
+            padding: 0.5rem 1rem;
+            background: $on-surface;
+            border: $on-background solid 2px;
+            border-radius: 1rem;
+        }
+        
+        .result {
+            display: flex;
+
+            div {
+                margin: 0 0.5rem;
+                text-align: center;
+
+                h1 {
+                    margin-bottom: 0.25rem;
+                    font-size: 1.5rem;
+                }
+            }
+        }
+
+        ul {
+            li {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                line-height: 2rem;
+
+                div {
+                    margin-left: 1rem;
+                    height: 1rem;
+                    width: 1rem;
+                    background: var(--i);
+                }
+            }
+        }
+    }
+
+    .container {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+
+        .player-section, .computer-section {
+            text-align: center;
+
+            .board {
+                height: 30rem;
+                width: 30rem;
+                position: relative;
+
+                .cell {
+                    height: 3rem;
+                    width: 3rem;
+                    background: $primary;
+                    border: $on-background solid 1px;
+                    position: absolute;
+                    cursor: crosshair;
+                }
+
+                .cell:hover:before {
+                    content: "";
+                    height: 100%;
+                    width: 100%;
+                    background: rgba(0, 0, 0, 0.2);
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                }
+            }
+        }
+
+        .deploy-section {
+            .direction-options {
+                button {
+
+                }
+            }
+
+            ul {
+                li {
+                    button {
+
+                    }
+                }
+            }
+        }
+    }
+
+    .notification-modal {
+        .modal-background {
+
+        }
+
+        .modal-container {
+            p {
+
+            }
+        }
+    }
+}
