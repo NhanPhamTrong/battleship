@@ -1,9 +1,11 @@
 import "./App.scss"
 import { useState } from "react"
-import { cellArray, shipContent } from "./Data"
+import { cellArray, shipContent } from "../Data"
+import { PlayerBoard } from "../PlayerBoard/PlayerBoard"
+import { ComputerSection } from "../ComputerBoard/ComputerSection"
 
 export const App = () => {
-    const [isShooting, setIsShooting] = useState(false)
+    const [isShooting, setIsShooting] = useState(true)
     const [playerCellData, setPlayerCellData] = useState(() => {
         let data = []
         for (let i = 0; i < cellArray.length; i++) {
@@ -79,56 +81,30 @@ export const App = () => {
         setShipData(shipData.map(ship => ({...ship, isHorizontal: e.currentTarget.getAttribute("id") === "horizontal" ? true : false})))
     }
 
-    const ChooseCellToDeploy = (e) => {
-        const chosenCell = playerCellData.filter(cell => cell.id === e.currentTarget.getAttribute("name"))[0]
+    const UpdateModal = (content) => {
+        setModal({
+            isPopModal: true,
+            content: content
+        })
+    }
 
-        if (direction.isChosen && shipData.filter(ship => ship.isChosen).length !== 0) {
-            const GetCondition = (cell, i) => {
-                return direction.isHorizontal ? (
-                    cell.positionX === chosenCell.positionX + i && cell.positionY === chosenCell.positionY
-                ) : (
-                    cell.positionY === chosenCell.positionY + i && cell.positionX === chosenCell.positionX
-                )
-            }
+    const UpdatePlayerCellData = (data) => {
+        setPlayerCellData(data)
+    }
 
-            let newPlayerCellData = playerCellData.map(cell => {
-                let newCellData = {}
-                for (let i = 0; i < shipData.filter(ship => ship.isChosen)[0].length; i++) {
-                    if (GetCondition(cell, i)) {
-                        return {...cell, isShipPart: true}
-                    }
-                    else {
-                        newCellData = cell
-                    }
-                }
-                return newCellData
-            })
-            setPlayerCellData(newPlayerCellData)
-            setShipData(shipData.filter(ship => !ship.isChosen))
-        }
-        else {
-            // Modal's things
-            if (!direction.isChosen) {
-                setModal({
-                    isPopModal: true,
-                    content: "Please select your ship's direction!"
-                })
-            }
+    const UpdateShipData = (data) => {
+        setShipData(data)
+    }
 
-            if (shipData.filter(ship => ship.isChosen).length === 0) {
-                setModal({
-                    isPopModal: true,
-                    content: "Please select your ship!"
-                })
-            }
+    const UpdateComputerCellData = (data) => {
+        setComputerCellData(data)
+    }
 
-            if (!direction.isChosen && shipData.filter(ship => ship.isChosen).length === 0) {
-                setModal({
-                    isPopModal: true,
-                    content: "Please select your ship and its direction!"
-                })
-            }
-        }
+    const CloseModal = () => {
+        setModal({
+            isPopModal: false,
+            content: ""
+        })
     }
 
     // console.log(playerCellData)
@@ -173,40 +149,19 @@ export const App = () => {
                     </ul>
                 </div>
                 <div className="container">
-                    <div className="player-section">
-                        <h1>Player Board</h1>
-                        <div className="board">
-                            {cellArray.map((cellList, cellListIndex) => {
-                                return cellList.map((cell, cellIndex) => (
-                                    <div
-                                        key={cellListIndex + "-" + cellIndex}
-                                        className={"cell " +
-                                            cellListIndex + "-" + cell +
-                                            (playerCellData.filter(playerCell => playerCell.id === cellListIndex + "-" + cellIndex)[0].isShipPart ? " ship" : "")}
-                                        name={cellListIndex + "-" + cellIndex}
-                                        style={{"top": cellListIndex * 48, "left": cell * 48}}
-                                        onClick={ChooseCellToDeploy}></div>
-                                ))
-                            })}
-                        </div>
-                    </div>
+                    <PlayerBoard
+                        playerCellData={playerCellData}
+                        shipData={shipData}
+                        cellArray={cellArray}
+                        direction={direction}
+                        UpdateModal={UpdateModal}
+                        UpdatePlayerCellData={UpdatePlayerCellData}
+                        UpdateShipData={UpdateShipData} />
                     {isShooting ? (
-                        <div className="computer-section">
-                            <h1>Computer Board</h1>
-                            <div className="board">
-                                {cellArray.map((cellList, cellListIndex) => {
-                                    return cellList.map((cell, cellIndex) => (
-                                        <div
-                                            key={cellListIndex + "-" + cellIndex}
-                                            className={"cell " +
-                                                cellListIndex + "-" + cell +
-                                                (computerCellData.filter(computerCell => computerCell.id === cellListIndex + "-" + cellIndex)[0].isShipPart ? " ship" : "")}
-                                            name={cellListIndex + "-" + cellIndex}
-                                            style={{"top": cellListIndex * 48, "left": cell * 48}}></div>
-                                    ))
-                                })}
-                            </div>
-                        </div>
+                        <ComputerSection
+                            computerCellData={computerCellData}
+                            cellArray={cellArray}
+                            UpdateComputerCellData={UpdateComputerCellData} />
                     ) : (
                         <div className="deploy-section">
                             <h1>Inventory</h1>
@@ -247,9 +202,9 @@ export const App = () => {
                     )}
                 </div>
                 <div className={"notification-modal " + (modal.isPopModal ? "active" : "")}>
-                    <div className="modal-background"></div>
+                    <div className="modal-background" onClick={CloseModal}></div>
                     <div className="modal-container">
-                        <p>{modal.content}</p>
+                        <h1>{modal.content}</h1>
                     </div>
                 </div>
             </main>
