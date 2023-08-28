@@ -1,8 +1,9 @@
 import "./App.scss"
 import { useState } from "react"
 import { cellArray, shipContent } from "../Data"
-import { PlayerBoard } from "../PlayerBoard/PlayerBoard"
-import { ComputerSection } from "../ComputerBoard/ComputerSection"
+import { PlayerSection } from "../PlayerSection/PlayerSection"
+import { ComputerSection } from "../ComputerSection/ComputerSection"
+import { Inventory } from "../Inventory/Inventory"
 
 export const App = () => {
     const [isShooting, setIsShooting] = useState(false)
@@ -69,17 +70,17 @@ export const App = () => {
         setPlayerCellData(playerCellData.map(cell => ({...cell, isShipPart: false, isShot: false})))
     }
 
-    const ChooseShip = (e) => {        
-        setShipData(shipData.map(ship => ({...ship, isChosen: e.currentTarget.getAttribute("id") === ship.id ? true : false})))
+    const ChooseShip = (shipId) => {
+        setShipData(shipData.map(ship => ({...ship, isChosen: shipId === ship.id ? true : false})))
     }
 
-    const ChooseDirection = (e) => {
+    const ChooseDirection = (directionId) => {
         setDirection({
             isChosen: true,
-            isHorizontal: e.currentTarget.getAttribute("id") === "horizontal" ? true : false
+            isHorizontal: directionId === "horizontal" ? true : false
         })
 
-        setShipData(shipData.map(ship => ({...ship, isHorizontal: e.currentTarget.getAttribute("id") === "horizontal" ? true : false})))
+        setShipData(shipData.map(ship => ({...ship, isHorizontal: directionId === "horizontal" ? true : false})))
     }
 
     const UpdateModal = (content) => {
@@ -201,20 +202,20 @@ export const App = () => {
                     <ul>
                         <li>
                             Attack missed the ship
-                            <div style={{"--i": "black"}}></div>
+                            <div style={{"--i": "rgb(60, 60, 60)"}}></div>
                         </li>
                         <li>
                             Attack was a hit
-                            <div style={{"--i": "red"}}></div>
+                            <div style={{"--i": "rgb(200, 60, 60)"}}></div>
                         </li>
                         <li>
                             Ship sunk
-                            <div style={{"--i": "purple"}}></div>
+                            <div style={{"--i": "rgb(200, 60, 200)"}}></div>
                         </li>
                     </ul>
                 </div>
                 <div className="container">
-                    <PlayerBoard
+                    <PlayerSection
                         playerCellData={playerCellData}
                         shipData={shipData}
                         cellArray={cellArray}
@@ -229,42 +230,11 @@ export const App = () => {
                             isShooting={isShooting}
                             UpdateIsShooting={UpdateIsShooting} />
                     ) : (
-                        <div className="deploy-section">
-                            <h1>Inventory</h1>
-                            <div className="direction-options">
-                                <button
-                                    id="horizontal"
-                                    className={direction.isHorizontal && direction.isChosen ? "active" : ""}
-                                    type="button"
-                                    onClick={ChooseDirection}
-                                >
-                                    Horizontal
-                                </button>
-                                <button
-                                    id="vertical"
-                                    className={!direction.isHorizontal && direction.isChosen ? "active" : ""}
-                                    type="button"
-                                    onClick={ChooseDirection}
-                                >
-                                    Vertical
-                                </button>
-                            </div>
-                            <ul>
-                                {shipData.map((ship, index) => (
-                                    <li key={index}>
-                                        <button
-                                            id={ship.id}
-                                            className={ship.isChosen ? "active" : ""}
-                                            type="button"
-                                            onClick={ChooseShip}
-                                        >
-                                            {ship.id.charAt(0).toUpperCase() + ship.id.slice(1)}
-                                            <span>{ship.length}</span>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <Inventory
+                            direction={direction}
+                            shipData={shipData}
+                            ChooseDirection={ChooseDirection}
+                            ChooseShip={ChooseShip} />
                     )}
                 </div>
                 <div className={"notification-modal " + (modal.isPopModal ? "active" : "")}>

@@ -1,0 +1,49 @@
+@import "../../assets/global-styles/global-styles";
+
+main {
+    .container {
+        .inventory {
+            width: 50%;
+
+            h1 {
+                margin-bottom: 0.5rem;
+            }
+
+            button {
+                padding: 0.5rem 1rem;
+                background: $primary;
+                border: $on-background solid 2px;
+            }
+
+            button:hover {
+                background: $on-background;
+                color: $on-surface;
+            }
+
+            button.active {
+                background: $surface;
+                color: $on-surface;
+            }
+
+            .direction-options {
+                button {
+                    border-radius: 10rem;
+                }
+            }
+
+            ul {
+                li {
+                    margin-top: 0.5rem;
+
+                    button {
+                        width: 12rem;
+                        border-radius: 0.25rem;
+                        background: $primary;
+                        display: flex;
+                        justify-content: space-between;
+                    }
+                }
+            }
+        }
+    }
+}

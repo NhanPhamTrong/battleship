@@ -1,0 +1,37 @@
+@import "../../assets/global-styles/global-styles";
+
+main {
+    .container {
+        .player-section {
+            margin-bottom: 1rem;
+            
+            .board {
+                .cell.ship {
+                    background: $ship-part;
+                }
+
+                .cell.shot {
+                    background: $shot;
+                }
+
+                .cell.ship.shot {
+                    background: $shot-on-ship;
+                }
+
+                .cell.sunk {
+                    background: $sunk;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    main {
+        .container {
+            .player-section {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

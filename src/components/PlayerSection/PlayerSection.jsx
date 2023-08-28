@@ -1,6 +1,6 @@
-import "./PlayerBoard.scss"
+import "./PlayerSection.scss"
 
-export const PlayerBoard = (props) => {
+export const PlayerSection = (props) => {
     const ChooseCellToDeploy = (e) => {
         const chosenCell = props.playerCellData.filter(cell => cell.id === e.currentTarget.getAttribute("name"))[0]
 
@@ -91,16 +91,22 @@ export const PlayerBoard = (props) => {
             <h1>Player Board</h1>
             <div className="board">
                 {props.cellArray.map((cellList, cellListIndex) => {
-                    return cellList.map((cell, cellIndex) => (
-                        <div
-                            key={cellListIndex + "-" + cellIndex}
-                            className={"cell " +
-                                cellListIndex + "-" + cell +
-                                (props.playerCellData.filter(playerCell => playerCell.id === cellListIndex + "-" + cellIndex)[0].isShipPart ? " ship" : "")}
-                            name={cellListIndex + "-" + cellIndex}
-                            style={{"top": cellListIndex * 48, "left": cell * 48}}
-                            onClick={ChooseCellToDeploy}></div>
-                    ))
+                    return cellList.map((cell, cellIndex) => {
+                        const CheckIsShipPart = props.playerCellData.filter(playerCell => playerCell.id === cellListIndex + "-" + cellIndex)[0].isShipPart
+                        const CheckIsShot = props.playerCellData.filter(playerCell => playerCell.id === cellListIndex + "-" + cellIndex)[0].isShot
+
+                        return (
+                            <div
+                                key={cellListIndex + "-" + cellIndex}
+                                className={"cell " +
+                                    cellListIndex + "-" + cell +
+                                    (CheckIsShipPart ? " ship" : "") +
+                                    (CheckIsShot ? " shot" : "")}
+                                name={cellListIndex + "-" + cellIndex}
+                                style={{"top": cellListIndex * 48, "left": cell * 48}}
+                                onClick={ChooseCellToDeploy}></div>
+                        )
+                    })
                 })}
             </div>
         </div>

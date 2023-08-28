@@ -1,0 +1,21 @@
+@import "../../assets/global-styles/global-styles";
+
+main {
+    .container {
+        .computer-section {
+            .board {
+                .cell.shot {
+                    background: $shot;
+                }
+
+                .cell.ship.shot {
+                    background: $shot-on-ship;
+                }
+
+                .cell.sunk {
+                    background: $sunk;
+                }
+            }
+        }
+    }
+}
