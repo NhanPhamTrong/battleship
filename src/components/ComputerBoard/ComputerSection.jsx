@@ -1,3 +1,5 @@
+import { useEffect } from "react"
+
 export const ComputerSection = (props) => {
     const ChooseCellToDeploy = () => {
         // Random direction
@@ -5,12 +7,44 @@ export const ComputerSection = (props) => {
         // Ship 5, 4, 3, 2
         const isHorizontal = [false, true][Math.floor(Math.random() * 2)]
 
-        // Get UpdateComputerCellData out of the for loop
         // FIX: Avoid isShipPart cells in creating random positions
+        let newComputerCellData = props.computerCellData
         for (let i = 2; i < 6; i++) {
             let randomPositionX = Math.floor(Math.random() * (isHorizontal ? (10 - i) : 10))
-            let randomPositionY = Math.floor(Math.random() * (!isHorizontal ? (10 - i) : 10))
-            const chosenCell = props.computerCellData.filter(cell => cell.positionX === randomPositionX && cell.positionY === randomPositionY)[0]
+            let randomPositionY = Math.floor(Math.random() * (!isHorizontal ? (10 - i) : 10))            
+            const data = newComputerCellData
+
+            const CheckIfStackedUp = (shipLength) => {
+                let mark = 0
+                const firstAxis = isHorizontal ? "positionX" : "positionY"
+                const secondAxis = isHorizontal ? "positionY" : "positionX"
+                const chosenCell = data.filter(cell => cell.positionX === randomPositionX && cell.positionY === randomPositionY)[0]
+                for (let j = 0; j < shipLength; j++) {
+                    if (data.filter(computerCell =>
+                            computerCell[firstAxis] === chosenCell[firstAxis] + j && computerCell[secondAxis] === chosenCell[secondAxis]
+                        )[0].isShipPart) {
+                        mark += 1
+                    }
+                    else {
+                        mark += 0
+                    }
+                }
+
+                if (mark === 0) {
+                    return false
+                }
+                else {
+                    return true
+                }
+            }
+
+            while (CheckIfStackedUp(i)) {
+                randomPositionX = Math.floor(Math.random() * (isHorizontal ? (10 - i) : 10))
+                randomPositionY = Math.floor(Math.random() * (!isHorizontal ? (10 - i) : 10))
+                console.log(randomPositionX, randomPositionY)
+            }
+
+            const chosenCell = data.filter(computerCell => computerCell.positionX === randomPositionX && computerCell.positionY === randomPositionY)[0]
 
             const GetCondition = (cell, i) => {
                 return isHorizontal ? (
@@ -20,22 +54,25 @@ export const ComputerSection = (props) => {
                 )
             }
 
-            let newComputerCellData = props.computerCellData.map(cell => {
+            newComputerCellData = newComputerCellData.map(computerCell => {
                 let newCellData = {}
                 for (let j = 0; j < i; j++) {
-                    if (GetCondition(cell, j)) {
-                        return {...cell, isShipPart: true}
+                    if (GetCondition(computerCell, j)) {
+                        return {...computerCell, isShipPart: true}
                     }
                     else {
-                        newCellData = cell
+                        newCellData = computerCell
                     }
                 }
                 return newCellData
             })
-            
-            props.UpdateComputerCellData(newComputerCellData)
         }
+        props.UpdateComputerCellData(newComputerCellData)
     }
+
+    useEffect(() => {
+        ChooseCellToDeploy()
+    }, [])
 
     return (
         <div className="computer-section">

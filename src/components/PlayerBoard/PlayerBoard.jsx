@@ -1,7 +1,6 @@
 import "./PlayerBoard.scss"
 
 export const PlayerBoard = (props) => {
-    // FIX: Avoid isShipPart cells
     const ChooseCellToDeploy = (e) => {
         const chosenCell = props.playerCellData.filter(cell => cell.id === e.currentTarget.getAttribute("name"))[0]
 
@@ -16,7 +15,7 @@ export const PlayerBoard = (props) => {
 
             const CheckShipLength = () => {
                 if ((props.direction.isHorizontal ? chosenCell.positionX : chosenCell.positionY) + props.shipData.filter(ship => ship.isChosen)[0].length > 10) {
-                    props.UpdateModal("Cannot place ship here!")
+                    props.UpdateModal("Cannot place ship here! Ship is longer than the board's limit")
                     return false
                 }
                 else {
@@ -24,20 +23,49 @@ export const PlayerBoard = (props) => {
                 }
             }
 
-            let newPlayerCellData = props.playerCellData.map(cell => {
-                let newCellData = {}
-                for (let i = 0; i < props.shipData.filter(ship => ship.isChosen)[0].length; i++) {
-                    if (GetCondition(cell, i)) {
-                        return {...cell, isShipPart: true}
+            const CheckIfStackedUp = (shipLength) => {
+                let mark = 0
+                const firstAxis = props.direction.isHorizontal ? "positionX" : "positionY"
+                const secondAxis = props.direction.isHorizontal ? "positionY" : "positionX"
+                for (let i = 0; i < shipLength; i++) {
+                    if (props.playerCellData.filter(playerCell =>
+                            playerCell[firstAxis] === chosenCell[firstAxis] + i && playerCell[secondAxis] === chosenCell[secondAxis]
+                        )[0].isShipPart) {
+                        mark += 1
                     }
                     else {
-                        newCellData = cell
+                        mark += 0
                     }
                 }
-                return newCellData
+
+                if (mark === 0) {
+                    return false
+                }
+                else {
+                    props.UpdateModal("Cannot place ship here! Ships are stacked up")
+                    return true
+                }
+            }
+
+            let newPlayerCellData = props.playerCellData.map(playerCell => {
+                let newCellData = {}
+                if (!CheckIfStackedUp(props.shipData.filter(ship => ship.isChosen)[0].length)) {
+                    for (let i = 0; i < props.shipData.filter(ship => ship.isChosen)[0].length; i++) {
+                        if (GetCondition(playerCell, i)) {
+                            return {...playerCell, isShipPart: true}
+                        }
+                        else {
+                            newCellData = playerCell
+                        }
+                    }
+                    return newCellData
+                }
+                else {
+                    return playerCell
+                }
             })
 
-            if (CheckShipLength()) {
+            if (CheckShipLength() && !CheckIfStackedUp(props.shipData.filter(ship => ship.isChosen)[0].length)) {
                 props.UpdatePlayerCellData(newPlayerCellData)
                 props.UpdateShipData(props.shipData.filter(ship => !ship.isChosen))
             }
