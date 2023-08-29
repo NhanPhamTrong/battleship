@@ -32,7 +32,7 @@ export const Inventory = (props) => {
             </div>
             <ul>
                 {props.shipData.map((ship, index) => (
-                    <li key={index}>
+                    <li key={index} className={ship.isDeployed ? "deployed" : ""}>
                         <button
                             id={ship.id}
                             className={ship.isChosen ? "active" : ""}

@@ -13,8 +13,8 @@ export const PlayerSection = (props) => {
                 )
             }
 
-            const CheckShipLength = () => {
-                if ((props.direction.isHorizontal ? chosenCell.positionX : chosenCell.positionY) + props.shipData.filter(ship => ship.isChosen)[0].length > 10) {
+            const CheckShipSize = () => {
+                if ((props.direction.isHorizontal ? chosenCell.positionX : chosenCell.positionY) + props.shipData.filter(ship => ship.isChosen)[0].size > 10) {
                     props.UpdateModal("Cannot place ship here! Ship is longer than the board's limit")
                     return false
                 }
@@ -27,16 +27,10 @@ export const PlayerSection = (props) => {
                 let mark = 0
                 const firstAxis = props.direction.isHorizontal ? "positionX" : "positionY"
                 const secondAxis = props.direction.isHorizontal ? "positionY" : "positionX"
-                if (CheckShipLength()) {
+                if (CheckShipSize()) {
                     for (let i = 0; i < shipSize; i++) {
-                        if (props.playerCellData.filter(playerCell =>
-                                playerCell[firstAxis] === chosenCell[firstAxis] + i && playerCell[secondAxis] === chosenCell[secondAxis]
-                            )[0].isShipPart) {
-                            mark += 1
-                        }
-                        else {
-                            mark += 0
-                        }
+                        mark += props.playerCellData.filter(playerCell =>
+                            playerCell[firstAxis] === chosenCell[firstAxis] + i && playerCell[secondAxis] === chosenCell[secondAxis])[0].isShipPart ? 1 : 0
                     }
                 }
 
@@ -58,17 +52,15 @@ export const PlayerSection = (props) => {
                             return {...playerCell, isShipPart: true, size: shipSize}
                         }
                     }
-                    return playerCell
                 }
-                else {
-                    return playerCell
-                }
+                return playerCell
             })
 
             let newShipData = props.shipData.map(ship => {
                 if (ship.size === shipSize) {
                     return {...ship,
-                        shipCellList: newPlayerCellData.filter(playerCell => playerCell.size === shipSize),
+                        playerShipCellList: newPlayerCellData.filter(playerCell => playerCell.size === shipSize),
+                        isChosen: false,
                         isDeployed: true}
                 }
                 else {
@@ -76,7 +68,7 @@ export const PlayerSection = (props) => {
                 }
             })
 
-            if (CheckShipLength() && !CheckIfStackedUp(shipSize)) {
+            if (CheckShipSize() && !CheckIfStackedUp(shipSize)) {
                 props.UpdatePlayerCellData(newPlayerCellData)
                 props.UpdateShipData(newShipData)
             }
@@ -103,17 +95,19 @@ export const PlayerSection = (props) => {
             <div className="board">
                 {props.cellArray.map((cellList, cellListIndex) => {
                     return cellList.map((cell, cellIndex) => {
-                        const CheckIsShipPart = props.playerCellData.filter(playerCell => playerCell.id === cellListIndex + "-" + cellIndex)[0].isShipPart
-                        const CheckIsShot = props.playerCellData.filter(playerCell => playerCell.id === cellListIndex + "-" + cellIndex)[0].isShot
+                        const CheckIsShipPart = props.playerCellData.filter(playerCell => playerCell.id === cellIndex + "-" + cellListIndex)[0].isShipPart
+                        const CheckIsShot = props.playerCellData.filter(playerCell => playerCell.id === cellIndex + "-" + cellListIndex)[0].isShot
+                        const CheckIsSunk = props.playerCellData.filter(playerCell => playerCell.id === cellIndex + "-" + cellListIndex)[0].isSunk
 
                         return (
                             <div
-                                key={cellListIndex + "-" + cellIndex}
+                                key={cellIndex + "-" + cellListIndex}
                                 className={"cell " +
-                                    cellListIndex + "-" + cell +
+                                    cell + "-" + cellListIndex +
                                     (CheckIsShipPart ? " ship" : "") +
-                                    (CheckIsShot ? " shot" : "")}
-                                name={cellListIndex + "-" + cellIndex}
+                                    (CheckIsShot ? " shot" : "") +
+                                    (CheckIsSunk ? " sunk" : "")}
+                                name={cellIndex + "-" + cellListIndex}
                                 style={{"top": cellListIndex * 48, "left": cell * 48}}
                                 onClick={ChooseCellToDeploy}></div>
                         )

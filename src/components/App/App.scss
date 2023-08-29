@@ -140,6 +140,7 @@ main {
             
             h1 {
                 font-size: 1.5rem;
+                text-align: center;
             }
         }
     }
@@ -150,7 +151,7 @@ main {
     }
 }
 
-@media only screen and (min-width: 992px) {
+@media only screen and (min-width: 1080px) {
     main {
         .main-header {
             display: flex;

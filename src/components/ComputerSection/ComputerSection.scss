@@ -4,6 +4,10 @@ main {
     .container {
         .computer-section {
             .board {
+                .cell.ship {
+                    background: red;
+                }
+
                 .cell.shot {
                     background: $shot;
                 }
@@ -12,7 +16,7 @@ main {
                     background: $shot-on-ship;
                 }
 
-                .cell.sunk {
+                .cell.ship.shot.sunk {
                     background: $sunk;
                 }
             }

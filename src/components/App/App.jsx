@@ -12,7 +12,7 @@ export const App = () => {
         for (let i = 0; i < cellArray.length; i++) {
             cellArray[i].forEach(cell => {
                 data.push({
-                    id: i + "-" + cell,
+                    id: cell + "-" + i,
                     positionX: cell,
                     positionY: i,
                     isShipPart: false,
@@ -28,7 +28,7 @@ export const App = () => {
         for (let i = 0; i < cellArray.length; i++) {
             cellArray[i].forEach(cell => {
                 data.push({
-                    id: i + "-" + cell,
+                    id: cell + "-" + i,
                     positionX: cell,
                     positionY: i,
                     isShipPart: false,
@@ -39,16 +39,16 @@ export const App = () => {
         return data
     })
 
-    const [prevCell, setPrevCell] = useState({
-        positionX: 0,
-        positionY: 0
-    })
-
     const [shipData, setShipData] = useState(shipContent)
 
     const [direction, setDirection] = useState({
         isChosen: false,
         isHorizontal: false
+    })
+
+    const [score, setScore] = useState({
+        player: 0,
+        computer: 0
     })
 
     const [modal, setModal] = useState({
@@ -107,9 +107,28 @@ export const App = () => {
         setShipData(data)
     }
 
+    const UpdateScore = (number) => {
+        console.log(number)
+        setScore(prevValue => ({
+            player: number,
+            computer: prevValue.computer
+        }))
+
+        console.log(score)
+    }
+
+    const UpdateResult = (content) => {
+        setModal({
+            isPopModal: true,
+            content: content
+        })
+    }
+
     const ChooseCellToDeployByComputer = () => {
         const isHorizontal = [false, true][Math.floor(Math.random() * 2)]
         let newComputerCellData = computerCellData
+        let newShipData = shipData
+
         for (let i = 2; i < 6; i++) {
             let randomPositionX = Math.floor(Math.random() * (isHorizontal ? (10 - i) : 10))
             let randomPositionY = Math.floor(Math.random() * (!isHorizontal ? (10 - i) : 10))
@@ -119,24 +138,12 @@ export const App = () => {
                 let mark = 0
                 const firstAxis = isHorizontal ? "positionX" : "positionY"
                 const secondAxis = isHorizontal ? "positionY" : "positionX"
-                const chosenCell = data.filter(cell => cell.positionX === randomPositionX && cell.positionY === randomPositionY)[0]
+                const TempChosenCell = data.filter(cell => cell.positionX === randomPositionX && cell.positionY === randomPositionY)[0]
                 for (let j = 0; j < shipSize; j++) {
-                    if (data.filter(computerCell =>
-                            computerCell[firstAxis] === chosenCell[firstAxis] + j && computerCell[secondAxis] === chosenCell[secondAxis]
-                        )[0].isShipPart) {
-                        mark += 1
-                    }
-                    else {
-                        mark += 0
-                    }
+                    mark += data.filter(computerCell =>
+                        computerCell[firstAxis] === TempChosenCell[firstAxis] + j && computerCell[secondAxis] === TempChosenCell[secondAxis])[0].isShipPart ? 1 : 0
                 }
-
-                if (mark === 0) {
-                    return false
-                }
-                else {
-                    return true
-                }
+                return !(mark === 0)
             }
 
             while (CheckIfStackedUp(i)) {
@@ -155,102 +162,76 @@ export const App = () => {
             }
 
             newComputerCellData = newComputerCellData.map(computerCell => {
-                let newCellData = {}
                 for (let j = 0; j < i; j++) {
                     if (GetCondition(computerCell, j)) {
-                        return {...computerCell, isShipPart: true}
-                    }
-                    else {
-                        newCellData = computerCell
+                        return {...computerCell, isShipPart: true, size: i}
                     }
                 }
-                return newCellData
+                return computerCell
             })
+
+            const computerShipCellList = newComputerCellData.filter(computerCell => computerCell.size === i)
+            newShipData = newShipData.map(ship => ship.size === i ? {...ship, computerShipCellList: computerShipCellList} : ship)
         }
+
+        setShipData(newShipData)
         setComputerCellData(newComputerCellData)
     }
 
-    const [isFoundShipPart, setIsFoundShipPart] = useState(false)
-    const [isFoundWay, setIsFoundWay] = useState(false)
-
     const ShotOnBoardByComputer = () => {
         // shoot randomly at first (DONE)
+        // BONUS
         // when found 1 ship's part, shoot 4 cell around
         // while shooting around, if computer find 1 more ship's part, it'll shoot at that way
 
-        console.log(isFoundShipPart)
+        let randomPositionX = Math.floor(Math.random() * 10)
+        let randomPositionY = Math.floor(Math.random() * 10)
 
-        if (!isFoundShipPart && !isFoundWay) {
-            console.log("condition 1")
-            let randomPositionX = Math.floor(Math.random() * 10)
-            let randomPositionY = Math.floor(Math.random() * 10)
-    
-            const CheckIfCoincidedCell = () => {
-                return playerCellData.filter(playerCell => playerCell.positionX === randomPositionX && playerCell.positionY === randomPositionY)[0].isShot ? true : false
-            }
-    
-            while (CheckIfCoincidedCell()) {
-                randomPositionX = Math.floor(Math.random() * 10)
-                randomPositionY = Math.floor(Math.random() * 10)
-            }
+        const CheckIfCoincidedCell = () => {
+            return playerCellData.filter(playerCell => playerCell.positionX === randomPositionX && playerCell.positionY === randomPositionY)[0].isShot ? true : false
+        }
 
-            const chosenCell = playerCellData.filter(playerCell => playerCell.positionX === randomPositionX && playerCell.positionY === randomPositionY)[0]
+        while (CheckIfCoincidedCell()) {
+            randomPositionX = Math.floor(Math.random() * 10)
+            randomPositionY = Math.floor(Math.random() * 10)
+        }
 
-            if (chosenCell.isShipPart) {
-                setIsFoundShipPart(true)
-                setPrevCell({
-                    positionX: chosenCell.positionX,
-                    positionY: chosenCell.positionY
-                })
+        const chosenCell = playerCellData.filter(playerCell => playerCell.positionX === randomPositionX && playerCell.positionY === randomPositionY)[0]
+
+        let newPlayerCellData = playerCellData.map(playerCell => {
+            if (playerCell.id === chosenCell.id) {
+                return {...playerCell, isShot: true}
             }
-    
-            let newPlayerCellData = playerCellData.map(playerCell => {
-                if (playerCell.id === chosenCell.id) {
-                    return {...playerCell, isShot: true}
-                }
-                else {
-                    return playerCell
+            else {
+                return playerCell
+            }
+        })
+
+        for (let i = 2; i < 6; i++) {
+            let countDestroyedCell = 0
+            newPlayerCellData.forEach(playerCell => {
+                if (playerCell.size === i && playerCell.isShipPart && playerCell.isShot) {
+                    countDestroyedCell += 1
                 }
             })
-    
-            setPlayerCellData(newPlayerCellData)
-        }
-        else if (isFoundShipPart && !isFoundWay) {
-            console.log("condition 2")
-            // Shoot 4 cell around
-            const getAroundList = [[0, 1], [-1, 0], [0, -1], [1, 0]]
 
-            // Check if around cells are in the board
-            // Check if around cells are shot
-
-            let newPlayerCellData = ""
-
-            for (let i = 0; i < getAroundList.length; i++) {
-                const chosenCell = playerCellData.filter(playerCell => playerCell.positionX === prevCell.positionX + getAroundList[i][0] && playerCell.positionY === prevCell.positionY + getAroundList[i][1])[0]
-                if (chosenCell.positionX < 10 && chosenCell.positionY < 10 && !chosenCell.isShot) {
-                    newPlayerCellData = playerCellData.map(playerCell => {
-                        if (playerCell.id === chosenCell.id) {
-                            return {...playerCell, isShot: true}
-                        }
-                        else {
-                            return playerCell
-                        }
-                    })
-
-                    if (chosenCell.isShipPart) {
-                        setIsFoundWay(true)
-                    }
-
-                    break
-                }
+            if (countDestroyedCell === i) {
+                newPlayerCellData = newPlayerCellData.map(playerCell => {
+                    return playerCell.size === i ? {...playerCell, isSunk: true} : playerCell
+                })
             }
-
-            setPlayerCellData(newPlayerCellData)
         }
-        else if (isFoundShipPart && isFoundWay) {
-            console.log("condition 3")
 
+        if (newPlayerCellData.filter(playerCell => playerCell.isSunk).length === 14) {
+            UpdateResult("Computer wins!")
         }
+
+        setScore(prevValue => ({
+            player: prevValue.player,
+            computer: newPlayerCellData.filter(playerCell => playerCell.isShipPart && playerCell.isShot).length
+        }))
+
+        setPlayerCellData(newPlayerCellData)
     }
 
     const CloseModal = () => {
@@ -279,11 +260,11 @@ export const App = () => {
                     <div className="result">
                         <div className="player">
                             <p>Player</p>
-                            <h1>123</h1>
+                            <h1>{score.player}</h1>
                         </div>
                         <div className="computer">
                             <p>Computer</p>
-                            <h1>123</h1>
+                            <h1>{score.computer}</h1>
                         </div>
                     </div>
                     <ul>
@@ -304,7 +285,7 @@ export const App = () => {
                 <div className="container">
                     <PlayerSection
                         playerCellData={playerCellData}
-                        shipData={shipData.filter(ship => !ship.isDeployed)}
+                        shipData={shipData}
                         cellArray={cellArray}
                         direction={direction}
                         UpdateModal={UpdateModal}
@@ -314,13 +295,16 @@ export const App = () => {
                         <ComputerSection
                             computerCellData={computerCellData}
                             cellArray={cellArray}
+                            shipData={shipData}
                             isShooting={isShooting}
                             UpdateComputerCellData={UpdateComputerCellData}
+                            UpdateScore={UpdateScore}
+                            UpdateResult={UpdateResult}
                             ShotOnBoardByComputer={ShotOnBoardByComputer} />
                     ) : (
                         <Inventory
                             direction={direction}
-                            shipData={shipData.filter(ship => !ship.isDeployed)}
+                            shipData={shipData}
                             ChooseDirection={ChooseDirection}
                             ChooseShip={ChooseShip} />
                     )}
