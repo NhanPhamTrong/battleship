@@ -108,13 +108,10 @@ export const App = () => {
     }
 
     const UpdateScore = (number) => {
-        console.log(number)
         setScore(prevValue => ({
             player: number,
             computer: prevValue.computer
         }))
-
-        console.log(score)
     }
 
     const UpdateResult = (content) => {
@@ -240,10 +237,6 @@ export const App = () => {
             content: ""
         })
     }
-
-    // console.log(playerCellData)
-    // console.log(computerCellData)
-    // console.log(shipData)
 
     return (
         <>
