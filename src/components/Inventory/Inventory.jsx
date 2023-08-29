@@ -40,7 +40,7 @@ export const Inventory = (props) => {
                             onClick={ChooseShip}
                         >
                             {ship.id.charAt(0).toUpperCase() + ship.id.slice(1)}
-                            <span>{ship.length}</span>
+                            <span>{ship.size}</span>
                         </button>
                     </li>
                 ))}

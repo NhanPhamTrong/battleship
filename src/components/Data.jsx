@@ -14,18 +14,22 @@ export const cellArray = [
 export const shipContent = [
     {
         id: "carrier",
-        length: 5
+        size: 5,
+        isDeployed: false
     },
     {
         id: "battleship",
-        length: 4
+        size: 4,
+        isDeployed: false
     },
     {
         id: "cruiser",
-        length: 3
+        size: 3,
+        isDeployed: false
     },
     {
         id: "destroyer",
-        length: 2
+        size: 2,
+        isDeployed: false
     }
 ]

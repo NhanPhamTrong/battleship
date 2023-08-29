@@ -23,18 +23,20 @@ export const PlayerSection = (props) => {
                 }
             }
 
-            const CheckIfStackedUp = (shipLength) => {
+            const CheckIfStackedUp = (shipSize) => {
                 let mark = 0
                 const firstAxis = props.direction.isHorizontal ? "positionX" : "positionY"
                 const secondAxis = props.direction.isHorizontal ? "positionY" : "positionX"
-                for (let i = 0; i < shipLength; i++) {
-                    if (props.playerCellData.filter(playerCell =>
-                            playerCell[firstAxis] === chosenCell[firstAxis] + i && playerCell[secondAxis] === chosenCell[secondAxis]
-                        )[0].isShipPart) {
-                        mark += 1
-                    }
-                    else {
-                        mark += 0
+                if (CheckShipLength()) {
+                    for (let i = 0; i < shipSize; i++) {
+                        if (props.playerCellData.filter(playerCell =>
+                                playerCell[firstAxis] === chosenCell[firstAxis] + i && playerCell[secondAxis] === chosenCell[secondAxis]
+                            )[0].isShipPart) {
+                            mark += 1
+                        }
+                        else {
+                            mark += 0
+                        }
                     }
                 }
 
@@ -47,27 +49,36 @@ export const PlayerSection = (props) => {
                 }
             }
 
+            const shipSize = props.shipData.filter(ship => ship.isChosen)[0].size
+
             let newPlayerCellData = props.playerCellData.map(playerCell => {
-                let newCellData = {}
-                if (!CheckIfStackedUp(props.shipData.filter(ship => ship.isChosen)[0].length)) {
-                    for (let i = 0; i < props.shipData.filter(ship => ship.isChosen)[0].length; i++) {
+                if (!CheckIfStackedUp(shipSize)) {
+                    for (let i = 0; i < shipSize; i++) {
                         if (GetCondition(playerCell, i)) {
-                            return {...playerCell, isShipPart: true}
-                        }
-                        else {
-                            newCellData = playerCell
+                            return {...playerCell, isShipPart: true, size: shipSize}
                         }
                     }
-                    return newCellData
+                    return playerCell
                 }
                 else {
                     return playerCell
                 }
             })
 
-            if (CheckShipLength() && !CheckIfStackedUp(props.shipData.filter(ship => ship.isChosen)[0].length)) {
+            let newShipData = props.shipData.map(ship => {
+                if (ship.size === shipSize) {
+                    return {...ship,
+                        shipCellList: newPlayerCellData.filter(playerCell => playerCell.size === shipSize),
+                        isDeployed: true}
+                }
+                else {
+                    return ship
+                }
+            })
+
+            if (CheckShipLength() && !CheckIfStackedUp(shipSize)) {
                 props.UpdatePlayerCellData(newPlayerCellData)
-                props.UpdateShipData(props.shipData.filter(ship => !ship.isChosen))
+                props.UpdateShipData(newShipData)
             }
         }
         else {
